@@ -19,6 +19,80 @@
         }
 
         /* ============================================
+           BEGIN SPLASH
+           ============================================ */
+        .begin-splash {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 45%, #0e0c18 0%, #050408 70%, #000 100%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .begin-splash.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .begin-title {
+            color: #e6c88a;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(1.4rem, 4vw, 2.4rem);
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 0 0 25px rgba(245, 215, 120, 0.55);
+            padding: 0 1rem;
+        }
+
+        .begin-title small {
+            display: block;
+            font-size: 0.55em;
+            letter-spacing: 6px;
+            color: #8a744a;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        .begin-btn {
+            background: linear-gradient(135deg, #f5d742, #d4af37);
+            color: #1a1208;
+            border: none;
+            border-radius: 60px;
+            padding: 1.1rem 3.8rem;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 25px #f5d742, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            animation: beginPulse 2s infinite alternate;
+        }
+
+        .begin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 45px #ffe066, 0 8px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
+        }
+
+        .begin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 25px #f5d742, 0 2px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
+        }
+
+        @keyframes beginPulse {
+            0%   { box-shadow: 0 0 20px #f5d742, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6; }
+            100% { box-shadow: 0 0 45px #ffe066, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6; }
+        }
+
+        /* ============================================
            INTRO OVERLAY — ANGEL WING + SCRAPBOOK FLIP
            ============================================ */
         .intro {
@@ -259,10 +333,6 @@
 
         .card.revealed { opacity: 1; }
 
-        /* GIF background layer, sits behind everything else.
-           We keep it in its own pseudo-layer so we can fade it in
-           separately from the card's content without touching z-stacking
-           of the actual profile elements. */
         .card::after {
             content: "";
             position: absolute;
@@ -277,12 +347,10 @@
             pointer-events: none;
         }
 
-        /* Triggered from JS right as the intro reveals the profile */
         .card.bg-gif-loaded::after {
-            opacity: 0.35; /* keeps the profile readable on top of the GIF */
+            opacity: 0.35;
         }
 
-        /* White-scheme state: shifts the outer card border and glow to white */
         .card.white-scheme {
             border-color: #ffffff;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
@@ -290,7 +358,6 @@
                         inset 0 0 20px rgba(255, 255, 255, 0.15);
         }
 
-        /* Darkening radial gradient on top of the GIF so text stays legible */
         .card::before {
             content: "";
             position: absolute;
@@ -393,14 +460,6 @@
 
         .portrait-frame.white-border .portrait-hint {
             opacity: 0;
-        }
-
-        .yt-hidden-player {
-            position: fixed;
-            width: 1px; height: 1px;
-            opacity: 0.01;
-            pointer-events: none;
-            top: -9999px; left: -9999px;
         }
 
         .model-tag {
@@ -738,6 +797,20 @@
 </head>
 <body>
 
+    <!-- ============================================
+         BEGIN SPLASH
+         ============================================ -->
+    <div class="begin-splash" id="beginSplash">
+        <div class="begin-title">
+            OMONI, TAERU
+            <small>· a memory ·</small>
+        </div>
+        <button class="begin-btn" id="beginBtn">BEGIN</button>
+    </div>
+
+    <!-- ============================================
+         INTRO OVERLAY
+         ============================================ -->
     <div class="intro" id="intro">
 
         <div class="wing-layer">
@@ -844,6 +917,9 @@
         </div>
     </div>
 
+    <!-- ============================================
+         MAIN CARD
+         ============================================ -->
     <div class="card" id="mainCard">
         <div class="character-visual">
             <div class="portrait-frame" id="portraitFrame">
@@ -857,7 +933,6 @@
                      alt="Taeru alt">
 
                 <div class="portrait-hint">Click</div>
-                <div class="yt-hidden-player" id="ytPlayer"></div>
             </div>
             <div class="model-tag">⛩️ 5★ ANIME MODEL ⛩️</div>
         </div>
@@ -929,130 +1004,99 @@
 
     <script>
         (function() {
+            const beginSplash = document.getElementById('beginSplash');
+            const beginBtn    = document.getElementById('beginBtn');
             const intro       = document.getElementById('intro');
             const scrapCards  = Array.from(document.querySelectorAll('.scrap-card[data-index]'));
             const finalCard   = document.getElementById('finalCard');
             const finalSlot   = document.getElementById('finalSlot');
-            const finalImg    = document.getElementById('finalImg');
             const burnCanvas  = document.getElementById('burnCanvas');
             const mainCard    = document.getElementById('mainCard');
-            const ytPlayer    = document.getElementById('ytPlayer');
             const equalizer   = document.getElementById('equalizer');
             const songStatus  = document.getElementById('songStatus');
             const portraitFrame = document.getElementById('portraitFrame');
             const altImg      = document.getElementById('altImg');
-            const VIDEO_ID    = 'QTjJd080aaA';
-            const SEEK_SECONDS = 134; // 2:14
 
-            const FADE_DURATION = 25000; // 25s image fade
-            const BORDER_DELAY  = 1000;  // +1s before border + scheme shift
+            // ============================================
+            // AUDIO — plain HTML5 audio
+            // ============================================
+            const AUDIO_SRC    = 'theme.mp3'; // <-- your file path
+            const SEEK_SECONDS = 134;         // 2:14
 
-            let playerLoaded = false;
-            let playerIframe = null;
-            let songAudible  = false;
-            let portraitClicked = false;
+            const song = new Audio(AUDIO_SRC);
+            song.preload = 'auto';
+            song.volume  = 0.85;
+            song.loop    = false;
 
-            function loadAndPlay(muted) {
-                if (playerLoaded) return;
-                playerLoaded = true;
-
-                const muteParam = muted ? '&mute=1' : '';
-                playerIframe = document.createElement('iframe');
-                playerIframe.setAttribute('src',
-                    `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1${muteParam}`
-                );
-                playerIframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-                playerIframe.setAttribute('allowfullscreen', 'false');
-                playerIframe.setAttribute('frameborder', '0');
-                playerIframe.id = 'ytFrame';
-                playerIframe.style.width = '1px';
-                playerIframe.style.height = '1px';
-
-                ytPlayer.appendChild(playerIframe);
-                equalizer.classList.add('playing');
-
-                if (!muted) {
-                    songStatus.textContent = '♪ I Don\'t Bend · playing…';
-                    songStatus.style.color = '#f5d742';
+            function startSong() {
+                const p = song.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        songStatus.textContent = '♪ I Don\'t Bend · playing…';
+                        songStatus.style.color = '#f5d742';
+                    }).catch(err => {
+                        console.warn('Audio play() rejected:', err);
+                    });
                 }
             }
 
-            function unmuteSong() {
-                if (songAudible || !playerLoaded) return;
-                songAudible = true;
-
-                if (playerIframe && playerIframe.parentNode) {
-                    playerIframe.parentNode.removeChild(playerIframe);
-                }
-                playerLoaded = false;
-                loadAndPlay(false);
-            }
-
-            function seekTo(seconds) {
-                if (!playerIframe) return;
+            function seekSong(seconds) {
                 try {
-                    playerIframe.contentWindow.postMessage(
-                        JSON.stringify({
-                            event: 'command',
-                            func: 'seekTo',
-                            args: [seconds, true]
-                        }),
-                        '*'
-                    );
-                    playerIframe.contentWindow.postMessage(
-                        JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
-                        '*'
-                    );
+                    song.currentTime = seconds;
+                    startSong();
                 } catch (e) {
-                    const muteParam = songAudible ? '' : '&mute=1';
-                    const newIframe = document.createElement('iframe');
-                    newIframe.setAttribute('src',
-                        `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1&start=${seconds}${muteParam}`
-                    );
-                    newIframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-                    newIframe.setAttribute('allowfullscreen', 'false');
-                    newIframe.setAttribute('frameborder', '0');
-                    newIframe.id = 'ytFrame';
-                    newIframe.style.width = '1px';
-                    newIframe.style.height = '1px';
-                    if (playerIframe && playerIframe.parentNode) {
-                        playerIframe.parentNode.removeChild(playerIframe);
-                    }
-                    ytPlayer.appendChild(newIframe);
-                    playerIframe = newIframe;
+                    song.addEventListener('loadedmetadata', function once() {
+                        song.removeEventListener('loadedmetadata', once);
+                        try { song.currentTime = seconds; } catch (e) {}
+                        startSong();
+                    });
                 }
             }
 
-            window.addEventListener('load', function() {
-                loadAndPlay(true);
-            });
+            // ============================================
+            // BEGIN SPLASH
+            // ============================================
+            let started = false;
 
-            ['click', 'touchstart', 'keydown', 'mousemove', 'scroll', 'wheel',
-             'pointerdown', 'pointermove', 'focus', 'visibilitychange']
-                .forEach(evt => {
-                    document.addEventListener(evt, function once() {
-                        document.removeEventListener(evt, once);
-                        unmuteSong();
-                    }, { once: true });
-                });
+            function beginProfile() {
+                if (started) return;
+                started = true;
 
-            setTimeout(unmuteSong, 250);
+                startSong();
+
+                beginSplash.classList.add('fade-out');
+                setTimeout(() => { beginSplash.style.display = 'none'; }, 1100);
+
+                startFlipSequence();
+            }
+
+            beginBtn.addEventListener('click', beginProfile);
+
+            // ============================================
+            // PORTRAIT CLICK
+            // ============================================
+            const FADE_DURATION = 25000;
+            const BORDER_DELAY  = 1000;
+            let portraitClicked = false;
 
             portraitFrame.addEventListener('click', function() {
                 if (portraitClicked) return;
                 portraitClicked = true;
 
-                unmuteSong();
-                setTimeout(() => seekTo(SEEK_SECONDS), 100);
+                startSong();
+                seekSong(SEEK_SECONDS);
 
                 altImg.classList.add('show');
 
-                setTimeout(() => {
+                setTimeout(function() {
                     portraitFrame.classList.add('white-border');
                     mainCard.classList.add('white-scheme');
                 }, FADE_DURATION + BORDER_DELAY);
             });
 
+            // ============================================
+            // BURN EFFECT
+            // ============================================
             function burnCard(callback) {
                 const card = finalCard;
                 const slot = finalSlot;
@@ -1175,7 +1219,7 @@
                     } else {
                         card.classList.remove('burning');
                         card.classList.add('burn-ash');
-                        setTimeout(() => {
+                        setTimeout(function() {
                             if (callback) callback();
                         }, 600);
                     }
@@ -1184,6 +1228,9 @@
                 requestAnimationFrame(frame);
             }
 
+            // ============================================
+            // SCRAPBOOK FLIP SEQUENCE
+            // ============================================
             function startFlipSequence() {
                 const FIRST_DELAY   = 800;
                 const FLIP_INTERVAL = 1350;
@@ -1200,13 +1247,13 @@
                     card.classList.add('visible');
 
                     if (isLast) {
-                        setTimeout(() => {
-                            burnCard(() => {
+                        setTimeout(function() {
+                            burnCard(function() {
                                 enterProfile();
                             });
                         }, FLIP_INTERVAL + FINAL_HOLD);
                     } else {
-                        setTimeout(() => {
+                        setTimeout(function() {
                             card.classList.remove('visible');
                             card.classList.add('flipped');
                             i++;
@@ -1218,24 +1265,25 @@
                 setTimeout(showNext, FIRST_DELAY);
             }
 
+            // ============================================
+            // ENTER PROFILE
+            // ============================================
             function enterProfile() {
-                unmuteSong();
+                startSong();
 
-                // Fade in the GIF background right as the intro gives way
                 mainCard.classList.add('bg-gif-loaded');
+                equalizer.classList.add('playing');
 
                 intro.classList.add('fade-out');
 
-                setTimeout(() => {
+                setTimeout(function() {
                     mainCard.classList.add('revealed');
                 }, 200);
 
-                setTimeout(() => {
+                setTimeout(function() {
                     intro.style.display = 'none';
                 }, 900);
             }
-
-            window.addEventListener('load', startFlipSequence);
         })();
     </script>
 </body>
