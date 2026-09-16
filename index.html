@@ -220,11 +220,8 @@
             pointer-events: none;
         }
 
-        /* When the burn finishes, we DON'T fade the card itself —
-           we just remove the burned layer so Reflections is visible.
-           The card stays in place until the profile cut. */
         .scrap-card.burn-ash {
-            /* no-op visual change now; the reveal happens inside the slot */
+            /* no-op visual change now */
         }
 
         .scrap-card .card-img-slot {
@@ -245,23 +242,20 @@
         }
 
         .scrap-card .card-img-slot img {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
 
-        /* Reflections image sits underneath Mari-ya in the final card */
         .scrap-card .card-img-slot .reflections-under {
-            position: absolute;
-            inset: 0;
             z-index: 1;
             opacity: 1;
         }
 
-        /* Mari-ya sits on top and gets burned away */
         .scrap-card .card-img-slot .top-layer {
-            position: relative;
             z-index: 2;
         }
 
@@ -319,6 +313,59 @@
 
         @keyframes fadeInTitle {
             to { opacity: 1; }
+        }
+
+        /* ============================================
+           LIGHTNING OVERLAY
+           Full-screen layer that hosts bolt SVGs
+           during the impact flash sequence.
+           ============================================ */
+        .lightning-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bolt {
+            position: absolute;
+            opacity: 0;
+            mix-blend-mode: screen;
+            filter: drop-shadow(0 0 12px #ffffff) drop-shadow(0 0 35px #aaccff);
+            animation: boltFlash 0.32s ease-out forwards;
+        }
+
+        .bolt svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* The bolt itself uses a stroke-based path with a bright core */
+        .bolt svg path {
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .bolt svg path.glow {
+            stroke: #cce0ff;
+            stroke-width: 6;
+            opacity: 0.55;
+            filter: blur(2px);
+        }
+
+        @keyframes boltFlash {
+            0%   { opacity: 0; }
+            8%   { opacity: 1; }
+            18%  { opacity: 0.2; }
+            28%  { opacity: 1; }
+            55%  { opacity: 0.9; }
+            75%  { opacity: 0.4; }
+            100% { opacity: 0; }
         }
 
         /* ============================================
@@ -837,6 +884,9 @@
 </head>
 <body>
 
+    <!-- Lightning overlay: bolts get injected here at runtime -->
+    <div class="lightning-layer" id="lightningLayer"></div>
+
     <!-- ============================================
          BEGIN SPLASH
          ============================================ -->
@@ -950,11 +1000,9 @@
             <!-- FINAL CARD: Reflections underneath, Mari-ya on top (burned away) -->
             <div class="scrap-card" data-index="8" id="finalCard">
                 <div class="card-img-slot" id="finalSlot">
-                    <!-- Reflections sits at the bottom of the stack -->
                     <img class="reflections-under"
                          src="https://file.garden/aqgdSRXJrLKWXbRd/Profiles/Reflections.png"
                          alt="Reflections">
-                    <!-- Mari-ya sits on top and gets burned away -->
                     <img class="top-layer"
                          src="https://i.ibb.co/pv7bXhtC/Mari-ya.png"
                          alt="Mari-ya"
@@ -1066,12 +1114,13 @@
             const songStatus  = document.getElementById('songStatus');
             const portraitFrame = document.getElementById('portraitFrame');
             const altImg      = document.getElementById('altImg');
+            const lightningLayer = document.getElementById('lightningLayer');
 
             // ============================================
-            // AUDIO — plain HTML5 audio
+            // AUDIO
             // ============================================
-            const AUDIO_SRC    = 'theme.mp3'; // <-- your file path
-            const SEEK_SECONDS = 134;         // 2:14
+            const AUDIO_SRC    = 'theme.mp3';
+            const SEEK_SECONDS = 134;
 
             const song = new Audio(AUDIO_SRC);
             song.preload = 'auto';
@@ -1123,23 +1172,111 @@
             beginBtn.addEventListener('click', beginProfile);
 
             // ============================================
-            // IMPACT FRAME FLASH
+            // LIGHTNING STRIKES
+            // Builds a jagged SVG bolt at a random angle and position.
+            // ============================================
+            function makeBoltSVG(seed) {
+                // Build a jagged path from top to bottom of the SVG viewBox.
+                // Uses a fixed viewBox of 200x400 so the bolt path is
+                // consistent and only the CSS positioning varies.
+                const segments = 9;
+                let x = 100;
+                let path = `M ${x} 0`;
+                for (let i = 1; i <= segments; i++) {
+                    const y = (400 / segments) * i;
+                    // Zig-zag horizontally by a random amount each step
+                    const dx = (Math.random() - 0.5) * (i === segments ? 20 : 55);
+                    x += dx;
+                    path += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+                }
+
+                // Add a couple of small offshoots for realism
+                let branches = '';
+                const branchCount = 2;
+                for (let b = 0; b < branchCount; b++) {
+                    const startSeg = 2 + Math.floor(Math.random() * 4);
+                    const startY = (400 / segments) * startSeg;
+                    const startX = 100 + (Math.random() - 0.5) * 60;
+                    const endY = startY + 40 + Math.random() * 60;
+                    const endX = startX + (Math.random() - 0.5) * 90;
+                    branches += ` M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)}`;
+                }
+
+                // Two stacked paths: a wide soft glow, then a bright core
+                return `
+                    <svg viewBox="0 0 200 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="glow" d="${path}${branches}" />
+                        <path d="${path}${branches}" />
+                    </svg>
+                `;
+            }
+
+            function strikeBolt(options) {
+                const opts = options || {};
+                const bolt = document.createElement('div');
+                bolt.className = 'bolt';
+
+                // Randomize size, position, and rotation
+                const w = opts.w || (140 + Math.random() * 220);
+                const h = opts.h || (340 + Math.random() * 320);
+                const left = opts.left != null
+                    ? opts.left
+                    : (Math.random() * 90 - 5);   // % from left
+                const top  = opts.top != null
+                    ? opts.top
+                    : (Math.random() * 20 - 10);  // % from top
+                const rot  = opts.rot != null
+                    ? opts.rot
+                    : (Math.random() * 50 - 25);  // degrees
+
+                bolt.style.width = w + 'px';
+                bolt.style.height = h + 'px';
+                bolt.style.left = left + 'vw';
+                bolt.style.top = top + 'vh';
+                bolt.style.transform = `rotate(${rot}deg)`;
+                bolt.style.transformOrigin = 'top center';
+
+                bolt.innerHTML = makeBoltSVG();
+
+                lightningLayer.appendChild(bolt);
+
+                // Remove the bolt after the flash animation completes
+                setTimeout(() => {
+                    if (bolt.parentNode) bolt.parentNode.removeChild(bolt);
+                }, 400);
+            }
+
+            // ============================================
+            // IMPACT FRAME FLASH + LIGHTNING SEQUENCE
+            // Palette pulses and lightning strikes fire in sync.
             // ============================================
             function impactFlash() {
                 const step = 90;
+
+                // Strike 1 — with invert
+                strikeBolt({ w: 220, h: 520, left: 12, top: -8, rot: -18 });
 
                 document.body.classList.add('impact-invert');
                 setTimeout(() => {
                     document.body.classList.remove('impact-invert');
                     document.body.classList.add('impact-grayscale');
 
+                    // Strike 2 — with grayscale
+                    strikeBolt({ w: 180, h: 460, left: 62, top: -6, rot: 22 });
+
                     setTimeout(() => {
                         document.body.classList.remove('impact-grayscale');
                         document.body.classList.add('impact-invert-2');
 
+                        // Strike 3 — with second invert
+                        strikeBolt({ w: 260, h: 600, left: 38, top: -10, rot: -6 });
+
                         setTimeout(() => {
                             document.body.classList.remove('impact-invert-2');
                             document.body.classList.add('impact-grayscale-2');
+
+                            // Strike 4 — with final grayscale
+                            strikeBolt({ w: 160, h: 420, left: 78, top: -4, rot: 34 });
 
                             setTimeout(() => {
                                 document.body.classList.remove('impact-grayscale-2');
@@ -1166,16 +1303,12 @@
 
                 altImg.classList.add('show');
 
-                // At the 26s mark: impact flash + palette change + tremor
-                // all trigger together.
                 setTimeout(function() {
                     impactFlash();
                     mainCard.classList.add('tremor');
                     portraitFrame.classList.add('white-border');
                     mainCard.classList.add('white-scheme');
 
-                    // Clean up the tremor class after it finishes so
-                    // re-triggering (if ever) would work.
                     setTimeout(() => {
                         mainCard.classList.remove('tremor');
                     }, 600);
@@ -1183,7 +1316,7 @@
             });
 
             // ============================================
-            // BURN EFFECT — burns the top layer, reveals Reflections
+            // BURN EFFECT
             // ============================================
             function burnCard(callback) {
                 const card = finalCard;
@@ -1305,25 +1438,17 @@
                     if (elapsed < TOTAL) {
                         requestAnimationFrame(frame);
                     } else {
-                        // Burn complete. Hide the burned top layer so the
-                        // Reflections image underneath is fully revealed.
                         card.classList.remove('burning');
                         card.classList.add('burn-ash');
 
-                        // Fade the top Mari-ya layer out so Reflections
-                        // is what remains in the slot.
                         finalImg.style.transition = 'opacity 0.9s ease';
                         finalImg.style.opacity = '0';
 
-                        // Also fade the canvas out so the revealed image
-                        // is clean (no leftover ash overlay).
                         setTimeout(() => {
                             burnCanvas.style.transition = 'opacity 1.2s ease';
                             burnCanvas.style.opacity = '0';
                         }, 200);
 
-                        // Hold on the revealed Reflections for a beat,
-                        // then hand off to the profile.
                         setTimeout(function() {
                             if (callback) callback();
                         }, 2200);
