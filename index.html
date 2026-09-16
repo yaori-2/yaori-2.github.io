@@ -779,6 +779,17 @@
             100% { height: 24px; opacity: 1; }
         }
 
+        /* ============================================
+           IMPACT FRAME FLASH
+           Filters applied to <body> in rapid succession:
+             invert  → grayscale → invert → grayscale
+           Each step ~90ms, total ~360ms.
+           ============================================ */
+        body.impact-invert    { filter: invert(1); }
+        body.impact-grayscale { filter: grayscale(1); }
+        body.impact-invert-2  { filter: invert(1); }
+        body.impact-grayscale-2 { filter: grayscale(1); }
+
         @media (max-width: 700px) {
             .card { padding: 1.5rem; border-radius: 28px; }
             .name h1 { font-size: 2.4rem; }
@@ -1073,6 +1084,37 @@
             beginBtn.addEventListener('click', beginProfile);
 
             // ============================================
+            // IMPACT FRAME FLASH
+            // Rapid filter pulses on the whole page:
+            //   invert → grayscale → invert → grayscale
+            // Each step ~90ms.
+            // ============================================
+            function impactFlash() {
+                const step = 90;
+
+                document.body.classList.add('impact-invert');
+                setTimeout(() => {
+                    document.body.classList.remove('impact-invert');
+                    document.body.classList.add('impact-grayscale');
+
+                    setTimeout(() => {
+                        document.body.classList.remove('impact-grayscale');
+                        document.body.classList.add('impact-invert-2');
+
+                        setTimeout(() => {
+                            document.body.classList.remove('impact-invert-2');
+                            document.body.classList.add('impact-grayscale-2');
+
+                            setTimeout(() => {
+                                document.body.classList.remove('impact-grayscale-2');
+                            }, step);
+
+                        }, step);
+                    }, step);
+                }, step);
+            }
+
+            // ============================================
             // PORTRAIT CLICK
             // ============================================
             const FADE_DURATION = 25000;
@@ -1088,6 +1130,13 @@
 
                 altImg.classList.add('show');
 
+                // At the moment the 25s fade completes, trigger the
+                // impact frame flash BEFORE the white-scheme shift.
+                setTimeout(function() {
+                    impactFlash();
+                }, FADE_DURATION);
+
+                // Then, after the extra 1s delay, shift to the white scheme.
                 setTimeout(function() {
                     portraitFrame.classList.add('white-border');
                     mainCard.classList.add('white-scheme');
