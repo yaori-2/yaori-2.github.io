@@ -93,7 +93,7 @@
         }
 
         /* ============================================
-           INTRO OVERLAY — ANGEL WING + SCRAPBOOK FLIP
+           INTRO OVERLAY
            ============================================ */
         .intro {
             position: fixed;
@@ -279,6 +279,48 @@
             z-index: -1;
         }
 
+        /* ============================================
+           FINAL REVEAL CARD
+           Sits BEHIND the burning "Hope" card the whole
+           time. When the burn finishes and the Hope card
+           fades to ash, this stays put and becomes the
+           visible layer.
+           ============================================ */
+        .final-reveal {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            border: 3px solid #b8914b;
+            overflow: hidden;
+            opacity: 0;
+            z-index: 1; /* BEHIND the burning card, which has z-index 2+ when stacked */
+            background: #050408;
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, 0.85),
+                0 0 40px rgba(184, 145, 75, 0.3),
+                inset 0 0 40px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Once the burning card reaches its "ash" state, this
+           fades in to become the visible final frame. */
+        .final-reveal.show {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        .final-reveal img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* The burning "Hope" card sits above the reveal so it
+           covers it until the burn is complete. */
+        .scrap-card.final-card {
+            z-index: 3;
+        }
+
         .intro-title {
             position: absolute;
             top: 7%;
@@ -326,6 +368,7 @@
             position: relative;
             overflow: hidden;
             opacity: 0;
+            transform-origin: center center;
             transition: opacity 1.2s ease,
                         border-color 3s ease,
                         box-shadow 3s ease;
@@ -371,6 +414,23 @@
 
         .card.white-scheme::before {
             background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.45) 70%);
+        }
+
+        /* ============================================
+           TREMOR — subtle profile shudder on impact
+           ============================================ */
+        .card.tremor {
+            animation: tremorShake 0.5s ease-out;
+        }
+
+        @keyframes tremorShake {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            12%  { transform: translate(-1.2px, 0.8px) rotate(-0.08deg); }
+            26%  { transform: translate(1px, -0.6px) rotate(0.07deg); }
+            42%  { transform: translate(-0.7px, 0.4px) rotate(-0.05deg); }
+            58%  { transform: translate(0.5px, -0.3px) rotate(0.04deg); }
+            74%  { transform: translate(-0.3px, 0.2px) rotate(-0.02deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
 
         .character-visual {
@@ -781,9 +841,6 @@
 
         /* ============================================
            IMPACT FRAME FLASH
-           Filters applied to <body> in rapid succession:
-             invert  → grayscale → invert → grayscale
-           Each step ~90ms, total ~360ms.
            ============================================ */
         body.impact-invert    { filter: invert(1); }
         body.impact-grayscale { filter: grayscale(1); }
@@ -918,7 +975,17 @@
                 <div class="card-caption">Harsh Reality</div>
             </div>
 
-            <div class="scrap-card" data-index="8" id="finalCard">
+            <!-- ============================================
+                 FINAL "HOPE" CARD
+                 The final-reveal sits behind, holding the
+                 eye image. The burning card sits on top.
+                 ============================================ -->
+            <div class="final-reveal" id="finalReveal">
+                <img src="https://file.garden/aqgdSRXJrLKWXbRd/Profiles/Untitled55_20260915233203.png"
+                     alt="Final reveal">
+            </div>
+
+            <div class="scrap-card final-card" data-index="8" id="finalCard">
                 <div class="card-img-slot" id="finalSlot">
                     <img src="https://i.ibb.co/pv7bXhtC/Mari-ya.png" alt="Mari-ya" id="finalImg">
                     <canvas class="burn-canvas" id="burnCanvas"></canvas>
@@ -1021,6 +1088,7 @@
             const scrapCards  = Array.from(document.querySelectorAll('.scrap-card[data-index]'));
             const finalCard   = document.getElementById('finalCard');
             const finalSlot   = document.getElementById('finalSlot');
+            const finalReveal = document.getElementById('finalReveal');
             const burnCanvas  = document.getElementById('burnCanvas');
             const mainCard    = document.getElementById('mainCard');
             const equalizer   = document.getElementById('equalizer');
@@ -1085,9 +1153,6 @@
 
             // ============================================
             // IMPACT FRAME FLASH
-            // Rapid filter pulses on the whole page:
-            //   invert → grayscale → invert → grayscale
-            // Each step ~90ms.
             // ============================================
             function impactFlash() {
                 const step = 90;
@@ -1115,7 +1180,7 @@
             }
 
             // ============================================
-            // PORTRAIT CLICK
+            // PORTRAIT CLICK — seek + fade + impact + palette
             // ============================================
             const FADE_DURATION = 25000;
             const BORDER_DELAY  = 1000;
@@ -1130,14 +1195,10 @@
 
                 altImg.classList.add('show');
 
-                // At the moment the 25s fade completes, trigger the
-                // impact frame flash BEFORE the white-scheme shift.
+                // At 26s: impact flash, tremor, palette shift all together
                 setTimeout(function() {
                     impactFlash();
-                }, FADE_DURATION);
-
-                // Then, after the extra 1s delay, shift to the white scheme.
-                setTimeout(function() {
+                    mainCard.classList.add('tremor');
                     portraitFrame.classList.add('white-border');
                     mainCard.classList.add('white-scheme');
                 }, FADE_DURATION + BORDER_DELAY);
@@ -1268,6 +1329,15 @@
                     } else {
                         card.classList.remove('burning');
                         card.classList.add('burn-ash');
+
+                        // The instant the burned card starts fading to ash,
+                        // reveal the image sitting behind it. The ash fade
+                        // takes 1s in CSS — we start the reveal slightly after
+                        // so the eye image emerges from behind the burned edges.
+                        setTimeout(function() {
+                            finalReveal.classList.add('show');
+                        }, 400);
+
                         setTimeout(function() {
                             if (callback) callback();
                         }, 600);
@@ -1323,15 +1393,19 @@
                 mainCard.classList.add('bg-gif-loaded');
                 equalizer.classList.add('playing');
 
-                intro.classList.add('fade-out');
+                // Give the eye image a moment in view before the intro
+                // fades away to the profile.
+                setTimeout(function() {
+                    intro.classList.add('fade-out');
+                }, 1200);
 
                 setTimeout(function() {
                     mainCard.classList.add('revealed');
-                }, 200);
+                }, 1600);
 
                 setTimeout(function() {
                     intro.style.display = 'none';
-                }, 900);
+                }, 2400);
             }
         })();
     </script>
