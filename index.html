@@ -369,13 +369,49 @@
             100% { opacity: 0; }
         }
 
-        /* Tail bolts: softer, slower decay, slightly fainter */
         @keyframes boltFlashTail {
             0%   { opacity: 0; }
             10%  { opacity: 0.7; }
             22%  { opacity: 0.15; }
             34%  { opacity: 0.6; }
             60%  { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+
+        /* ============================================
+           FLASH GIF OVERLAY
+           A single-frame subliminal flash of the
+           provided GIF during the impact sequence.
+           ============================================ */
+        .flash-gif {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;        /* above lightning, above everything */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.35);
+            transition: none;
+        }
+
+        .flash-gif img {
+            width: min(60vw, 520px);
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 25px #ffffff) drop-shadow(0 0 60px #aaccff);
+        }
+
+        .flash-gif.on {
+            animation: gifFlash 0.42s ease-out forwards;
+        }
+
+        @keyframes gifFlash {
+            0%   { opacity: 0; }
+            10%  { opacity: 1; }
+            30%  { opacity: 0.35; }
+            55%  { opacity: 0.85; }
             100% { opacity: 0; }
         }
 
@@ -895,6 +931,11 @@
 </head>
 <body>
 
+    <!-- Flash GIF overlay -->
+    <div class="flash-gif" id="flashGif">
+        <img src="https://media1.tenor.com/m/hud53P0nTsgAAAAd/eyes-eye-roll.gif" alt="">
+    </div>
+
     <!-- Lightning overlay: bolts get injected here at runtime -->
     <div class="lightning-layer" id="lightningLayer"></div>
 
@@ -1126,6 +1167,7 @@
             const portraitFrame = document.getElementById('portraitFrame');
             const altImg      = document.getElementById('altImg');
             const lightningLayer = document.getElementById('lightningLayer');
+            const flashGif    = document.getElementById('flashGif');
 
             // ============================================
             // AUDIO
@@ -1249,14 +1291,28 @@
             }
 
             // ============================================
-            // IMPACT FRAME FLASH + LIGHTNING SEQUENCE
-            // Palette pulses + 4 core strikes, then 2 tail
-            // strikes in the following 500ms.
+            // FLASH GIF — short subliminal burst
+            // ============================================
+            function flashGifBurst() {
+                // Reset any in-flight animation
+                flashGif.classList.remove('on');
+                // Force reflow so the animation can restart if it was
+                // triggered again before the previous one finished
+                void flashGif.offsetWidth;
+                flashGif.classList.add('on');
+
+                setTimeout(() => {
+                    flashGif.classList.remove('on');
+                }, 500);
+            }
+
+            // ============================================
+            // IMPACT FRAME FLASH + LIGHTNING + GIF SEQUENCE
             // ============================================
             function impactFlash() {
                 const step = 90;
 
-                // ---- Core sequence (4 bolts, synced with palette) ----
+                // ---- Core sequence ----
 
                 // Strike 1 — with invert
                 strikeBolt({ w: 220, h: 520, left: 12, top: -8, rot: -18 });
@@ -1268,6 +1324,10 @@
 
                     // Strike 2 — with grayscale
                     strikeBolt({ w: 180, h: 460, left: 62, top: -6, rot: 22 });
+
+                    // GIF flashes here — on the first grayscale pulse,
+                    // which is the "strongest" beat of the sequence.
+                    flashGifBurst();
 
                     setTimeout(() => {
                         document.body.classList.remove('impact-grayscale');
@@ -1287,10 +1347,6 @@
                                 document.body.classList.remove('impact-grayscale-2');
 
                                 // ---- Tail-off strikes ----
-                                // Two more bolts flash as the palette shift
-                                // settles into the white-scheme transition.
-                                // They use a softer, slower flash animation.
-
                                 strikeBolt({
                                     w: 200, h: 500,
                                     left: 22, top: -6, rot: -12,
