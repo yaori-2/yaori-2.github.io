@@ -478,8 +478,6 @@
 
         /* ============================================
            FLIP BUTTON
-           Small pill in the top-right of the card.
-           Present on both faces; toggles rotation.
            ============================================ */
         .flip-btn {
             position: absolute;
@@ -616,7 +614,7 @@
             display: block;
             opacity: 0;
             z-index: 2;
-            transition: opacity 25s linear;
+            transition: opacity 24s linear;
             pointer-events: none;
             will-change: opacity;
         }
@@ -1021,7 +1019,7 @@
             padding-bottom: 0.75rem;
             z-index: 1;
             position: relative;
-            padding-right: 110px; /* room for the seal */
+            padding-right: 110px;
         }
 
         .license-header .state {
@@ -1531,7 +1529,7 @@
                                 <span style="height:22px"></span>
                                 <span style="height:32px"></span>
                             </div>
-                            <div class="num">B0-UND73-55</div>
+                            <div class="num">TR-0M0N1-7742</div>
                         </div>
                     </div>
                 </div>
@@ -1567,7 +1565,7 @@
             // AUDIO
             // ============================================
             const AUDIO_SRC    = 'theme.mp3';
-            const SEEK_SECONDS = 133;
+            const SEEK_SECONDS = 134;
 
             const song = new Audio(AUDIO_SRC);
             song.preload = 'auto';
@@ -1754,7 +1752,7 @@
             // ============================================
             // PORTRAIT CLICK — silent, no indicator
             // ============================================
-            const FADE_DURATION = 25000;
+            const FADE_DURATION = 24000;
             const BORDER_DELAY  = 1000;
             let portraitClicked = false;
 
