@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMONI, TAERU · ANIME CARD (license bg)</title>
+    <title>OMONI, TAERU · ANIME CARD (Hopeless reveal)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1377,7 +1377,9 @@
                          id="finalImg">
                     <canvas class="burn-canvas" id="burnCanvas"></canvas>
                 </div>
-                <div class="card-caption">Hope</div>
+                <div class="card-caption" id="hopeCaption">
+                    <span id="hopeText">Hope</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1577,6 +1579,7 @@
             const portraitFrame = document.getElementById('portraitFrame');
             const altImg      = document.getElementById('altImg');
             const lightningLayer = document.getElementById('lightningLayer');
+            const hopeText    = document.getElementById('hopeText');
 
             // Flip wrapper elements
             const cardFlipWrapper = document.getElementById('cardFlipWrapper');
@@ -2000,6 +2003,81 @@
                     intro.style.display = 'none';
                 }, 900);
             }
+
+            // ============================================
+            // HOPE -> HOPELESS REVEAL
+            // ============================================
+            // The final card already has id "finalCard" and its caption is inside #hopeCaption.
+            // We'll observe the final image (top layer) opacity change to reveal "less".
+            // When finalImg opacity drops below 0.5 (burn effect), we change text to "Hopeless".
+            // But we want to keep the word "Hope" and append "less" with a fade-in.
+            // Simpler: replace innerHTML of #hopeText when finalImg opacity < 0.5.
+
+            function updateHopeText() {
+                // We want "Hopeless" – but keep it looking like the original caption style.
+                // The original was just "Hope". We'll change it to "Hopeless" with a smooth transition.
+                if (hopeText.textContent.trim() === 'Hope') {
+                    // Create a span for "less" that fades in
+                    hopeText.innerHTML = 'Hope<span id="lessPart" style="opacity:0; transition: opacity 0.8s ease;">less</span>';
+                    // Force reflow
+                    void hopeText.offsetWidth;
+                    const lessPart = document.getElementById('lessPart');
+                    if (lessPart) lessPart.style.opacity = '1';
+                }
+            }
+
+            // We'll poll the finalImg opacity since we can't easily hook into style changes.
+            // Or better: we know that after burn effect, finalImg opacity becomes 0.
+            // We'll set an interval to check.
+            let hopeCheckInterval = null;
+
+            function startHopeCheck() {
+                if (hopeCheckInterval) clearInterval(hopeCheckInterval);
+                hopeCheckInterval = setInterval(function() {
+                    const opacity = parseFloat(window.getComputedStyle(finalImg).opacity);
+                    if (opacity < 0.5 && hopeText.textContent.trim() === 'Hope') {
+                        updateHopeText();
+                        clearInterval(hopeCheckInterval);
+                        hopeCheckInterval = null;
+                    }
+                }, 200);
+            }
+
+            // Start checking when the final card becomes visible (i.e., when burn starts)
+            // We'll hook into the burnCard function to start the check.
+            // Since burnCard is called inside showNext for the last card, we can start the check there.
+
+            // Let's override the burnCard call or wrap it.
+            // We'll modify the startFlipSequence to also trigger the hope check.
+
+            // But burnCard is defined above, so we can call startHopeCheck() right after burnCard starts.
+            // We'll monkey-patch burnCard to call startHopeCheck after a delay.
+
+            const originalBurnCard = burnCard;
+            burnCard = function(callback) {
+                // start checking hope text after a short delay
+                setTimeout(startHopeCheck, 500);
+                originalBurnCard(callback);
+            };
+
+            // Also, just in case the image opacity changes via other means,
+            // we can also listen for a custom event, but polling is fine.
+
+            // Clean up interval on page unload (optional)
+            window.addEventListener('beforeunload', function() {
+                if (hopeCheckInterval) clearInterval(hopeCheckInterval);
+            });
+
+            // Also, we need to ensure that after the "less" is revealed, the text stays "Hopeless".
+            // The updateHopeText function handles that.
+
+            // One more thing: the initial state is "Hope". We want to hide "less" initially.
+            // So the original text is fine.
+
+            // But note: the caption element has id "hopeCaption" and inside it a span with id "hopeText".
+            // We'll make sure the initial text is "Hope".
+
+            // That's it.
         })();
     </script>
 </body>
