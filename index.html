@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMONI, TAERU · ANIME CARD</title>
+    <title>OMONI, TAERU · ANIME CARD (license bg)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -965,6 +965,23 @@
                         inset 0 0 40px rgba(255, 215, 120, 0.1);
         }
 
+        /* --- NEW: animated license background (gif) --- */
+        .license-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url('https://giffiles.alphacoders.com/215/215988.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.22;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 34px; /* match card radius minus border */
+            transition: opacity 0.5s ease;
+        }
+
         .license-card::before {
             content: "";
             position: absolute;
@@ -973,7 +990,13 @@
                 repeating-linear-gradient(45deg, rgba(184,145,75,0.05) 0px, rgba(184,145,75,0.05) 2px, transparent 2px, transparent 6px),
                 repeating-linear-gradient(-45deg, rgba(184,145,75,0.05) 0px, rgba(184,145,75,0.05) 2px, transparent 2px, transparent 6px);
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
+        }
+
+        /* Make sure all direct children of license-card sit above the background gif */
+        .license-card > * {
+            position: relative;
+            z-index: 2;
         }
 
         .license-seal {
@@ -987,7 +1010,7 @@
                 #f5d742, #ff9e3d, #c9a13b, #e6e6e6,
                 #f5d742, #ffe066, #b8914b, #f5d742);
             opacity: 0.75;
-            z-index: 2;
+            z-index: 10; /* above gif */
             box-shadow: 0 0 20px rgba(245, 215, 120, 0.6),
                         inset 0 0 15px rgba(0, 0, 0, 0.4);
             display: flex;
