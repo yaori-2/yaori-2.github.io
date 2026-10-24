@@ -30,7 +30,7 @@
 
 body{
   --t-profile:24.65s;
-  --alt-start:30s;
+  --alt-start:134s;
   --alt-dur:24s;
   --impact:calc(var(--alt-start) + var(--alt-dur) + 1s);
   background:radial-gradient(circle at 30% 10%,#1c1b2b,#0b0a12);
@@ -210,9 +210,9 @@ body{
 </head>
 <body>
 
-<!-- Theme song hosted on Jukehost. #t=104 starts the track so its 2:14 mark lands when the portrait begins to change (page time 30s). -->
+<!-- Theme song hosted on Jukehost. It plays from 0:00; the portrait change (--alt-start on body) is set to 134s so it lines up with the 2:14 mark if the song starts when the page loads. -->
 <audio class="player" controls autoplay loop preload="auto">
-  <source src="https://audio.jukehost.co.uk/01a16d73-2ee0-7032-a5a9-5759a22e8d34#t=104" type="audio/mpeg">
+  <source src="https://audio.jukehost.co.uk/01a16d73-2ee0-7032-a5a9-5759a22e8d34" type="audio/mpeg">
 </audio>
 
 <!-- Lightning bolts: timed to the impact moment (--impact) -->
