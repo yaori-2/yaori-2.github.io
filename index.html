@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMONI, TAERU · ANIME CARD (Hopeless reveal)</title>
+    <title>OMONI, TAERU · ANIME CARD</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,80 +16,6 @@
             font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
             padding: 1rem;
             overflow-x: hidden;
-        }
-
-        /* ============================================
-           BEGIN SPLASH
-           ============================================ */
-        .begin-splash {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 45%, #0e0c18 0%, #050408 70%, #000 100%);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2.5rem;
-            transition: opacity 1s ease, visibility 1s ease;
-        }
-
-        .begin-splash.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .begin-title {
-            color: #e6c88a;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: clamp(1.4rem, 4vw, 2.4rem);
-            letter-spacing: 10px;
-            text-transform: uppercase;
-            text-align: center;
-            text-shadow: 0 0 25px rgba(245, 215, 120, 0.55);
-            padding: 0 1rem;
-        }
-
-        .begin-title small {
-            display: block;
-            font-size: 0.55em;
-            letter-spacing: 6px;
-            color: #8a744a;
-            margin-top: 10px;
-            font-weight: 300;
-        }
-
-        .begin-btn {
-            background: linear-gradient(135deg, #f5d742, #d4af37);
-            color: #1a1208;
-            border: none;
-            border-radius: 60px;
-            padding: 1.1rem 3.8rem;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 0 25px #f5d742, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            animation: beginPulse 2s infinite alternate;
-        }
-
-        .begin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 45px #ffe066, 0 8px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
-        }
-
-        .begin-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 25px #f5d742, 0 2px 0 #8a6b1f, inset 0 2px 5px #fff8d6;
-        }
-
-        @keyframes beginPulse {
-            0%   { box-shadow: 0 0 20px #f5d742, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6; }
-            100% { box-shadow: 0 0 45px #ffe066, 0 6px 0 #8a6b1f, inset 0 2px 5px #fff8d6; }
         }
 
         /* ============================================
@@ -221,7 +147,10 @@
         }
 
         .scrap-card.burn-ash {
-            /* no-op visual change now */
+            opacity: 0;
+            transform: rotate(0deg) translateY(-30px) scale(0.7);
+            transition: opacity 1s ease, transform 1s ease;
+            filter: blur(6px);
         }
 
         .scrap-card .card-img-slot {
@@ -242,21 +171,10 @@
         }
 
         .scrap-card .card-img-slot img {
-            position: absolute;
-            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        .scrap-card .card-img-slot .reflections-under {
-            z-index: 1;
-            opacity: 1;
-        }
-
-        .scrap-card .card-img-slot .top-layer {
-            z-index: 2;
         }
 
         .scrap-card .burn-canvas {
@@ -316,114 +234,16 @@
         }
 
         /* ============================================
-           LIGHTNING OVERLAY
+           MAIN CARD
            ============================================ */
-        .lightning-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .bolt {
-            position: absolute;
-            opacity: 0;
-            mix-blend-mode: screen;
-            filter: drop-shadow(0 0 12px #ffffff) drop-shadow(0 0 35px #aaccff);
-            animation: boltFlash 0.32s ease-out forwards;
-        }
-
-        .bolt.tail {
-            animation: boltFlashTail 0.42s ease-out forwards;
-        }
-
-        .bolt svg {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        .bolt svg path {
-            fill: none;
-            stroke: #ffffff;
-            stroke-width: 2.4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .bolt svg path.glow {
-            stroke: #cce0ff;
-            stroke-width: 6;
-            opacity: 0.55;
-            filter: blur(2px);
-        }
-
-        @keyframes boltFlash {
-            0%   { opacity: 0; }
-            8%   { opacity: 1; }
-            18%  { opacity: 0.2; }
-            28%  { opacity: 1; }
-            55%  { opacity: 0.9; }
-            75%  { opacity: 0.4; }
-            100% { opacity: 0; }
-        }
-
-        @keyframes boltFlashTail {
-            0%   { opacity: 0; }
-            10%  { opacity: 0.7; }
-            22%  { opacity: 0.15; }
-            34%  { opacity: 0.6; }
-            60%  { opacity: 0.5; }
-            100% { opacity: 0; }
-        }
-
-        /* ============================================
-           MAIN CARD — FRONT / BACK FLIP
-           ============================================ */
-        .card-flip-wrapper {
-            max-width: 1000px;
-            width: 100%;
-            perspective: 1400px;
-            opacity: 0;
-            transition: opacity 1.2s ease;
-        }
-
-        .card-flip-wrapper.revealed { opacity: 1; }
-
-        .card-flip-inner {
-            position: relative;
-            width: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        .card-flip-inner.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            width: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-
-        .card-face.back {
-            position: absolute;
-            inset: 0;
-            transform: rotateY(180deg);
-        }
-
-        /* ----- The actual card (shared shell) ----- */
         .card {
+            max-width: 1000px;
             width: 100%;
             background: rgba(12, 12, 22, 0.85);
             backdrop-filter: blur(8px);
             border: 2px solid #b8914b;
             border-radius: 36px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
-                        0 0 30px rgba(184, 145, 75, 0.4),
-                        inset 0 0 20px rgba(255, 215, 120, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(184, 145, 75, 0.4), inset 0 0 20px rgba(255, 215, 120, 0.1);
             padding: 2rem;
             display: flex;
             flex-wrap: wrap;
@@ -431,11 +251,18 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            transform-origin: center center;
-            transition: border-color 3s ease,
+            opacity: 0;
+            transition: opacity 1.2s ease,
+                        border-color 3s ease,
                         box-shadow 3s ease;
         }
 
+        .card.revealed { opacity: 1; }
+
+        /* GIF background layer, sits behind everything else.
+           We keep it in its own pseudo-layer so we can fade it in
+           separately from the card's content without touching z-stacking
+           of the actual profile elements. */
         .card::after {
             content: "";
             position: absolute;
@@ -450,10 +277,12 @@
             pointer-events: none;
         }
 
+        /* Triggered from JS right as the intro reveals the profile */
         .card.bg-gif-loaded::after {
-            opacity: 0.35;
+            opacity: 0.35; /* keeps the profile readable on top of the GIF */
         }
 
+        /* White-scheme state: shifts the outer card border and glow to white */
         .card.white-scheme {
             border-color: #ffffff;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
@@ -461,6 +290,7 @@
                         inset 0 0 20px rgba(255, 255, 255, 0.15);
         }
 
+        /* Darkening radial gradient on top of the GIF so text stays legible */
         .card::before {
             content: "";
             position: absolute;
@@ -474,86 +304,6 @@
 
         .card.white-scheme::before {
             background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.45) 70%);
-        }
-
-        /* ============================================
-           FLIP BUTTON
-           ============================================ */
-        .flip-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 20;
-            background: rgba(20, 16, 8, 0.85);
-            border: 1px solid #b8914b;
-            color: #f5d742;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 0.4rem 0.9rem;
-            border-radius: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 12px rgba(245, 215, 120, 0.35),
-                        inset 0 0 6px rgba(0, 0, 0, 0.5);
-            transition: all 0.25s ease;
-        }
-
-        .flip-btn:hover {
-            background: rgba(40, 32, 16, 0.95);
-            color: #ffe066;
-            box-shadow: 0 0 20px rgba(245, 215, 120, 0.6),
-                        inset 0 0 6px rgba(0, 0, 0, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .flip-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 0 8px rgba(245, 215, 120, 0.4);
-        }
-
-        .flip-btn .flip-icon {
-            display: inline-block;
-            font-size: 0.9rem;
-            line-height: 1;
-            transition: transform 0.6s ease;
-        }
-
-        .flip-btn:hover .flip-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Match the button accent to the white-scheme shift */
-        .card.white-scheme .flip-btn {
-            border-color: #ffffff;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4),
-                        inset 0 0 6px rgba(0, 0, 0, 0.5);
-        }
-
-        .card.white-scheme .flip-btn:hover {
-            box-shadow: 0 0 22px rgba(255, 255, 255, 0.7),
-                        inset 0 0 6px rgba(0, 0, 0, 0.5);
-        }
-
-        /* ============================================
-           TREMOR
-           ============================================ */
-        .card.tremor {
-            animation: tremorShake 0.5s ease-out;
-        }
-
-        @keyframes tremorShake {
-            0%   { transform: translate(0, 0) rotate(0deg); }
-            12%  { transform: translate(-1.2px, 0.8px) rotate(-0.08deg); }
-            26%  { transform: translate(1px, -0.6px) rotate(0.07deg); }
-            42%  { transform: translate(-0.7px, 0.4px) rotate(-0.05deg); }
-            58%  { transform: translate(0.5px, -0.3px) rotate(0.04deg); }
-            74%  { transform: translate(-0.3px, 0.2px) rotate(-0.02deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
         }
 
         .character-visual {
@@ -614,13 +364,43 @@
             display: block;
             opacity: 0;
             z-index: 2;
-            transition: opacity 24s linear;
+            transition: opacity 25s linear;
             pointer-events: none;
             will-change: opacity;
         }
 
         .portrait-alt.show {
             opacity: 1;
+        }
+
+        .portrait-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            z-index: 4;
+            background: rgba(0, 0, 0, 0.6);
+            color: #f5d742;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 30px;
+            border: 1px solid #b8914b;
+            text-transform: uppercase;
+            pointer-events: none;
+            opacity: 0.85;
+            transition: opacity 0.6s ease, color 3s ease, border-color 3s ease;
+        }
+
+        .portrait-frame.white-border .portrait-hint {
+            opacity: 0;
+        }
+
+        .yt-hidden-player {
+            position: fixed;
+            width: 1px; height: 1px;
+            opacity: 0.01;
+            pointer-events: none;
+            top: -9999px; left: -9999px;
         }
 
         .model-tag {
@@ -940,302 +720,12 @@
             100% { height: 24px; opacity: 1; }
         }
 
-        /* ============================================
-           LICENSE BACK — MOCK DRIVER'S LICENSE
-           ============================================ */
-        .license-card {
-            background: linear-gradient(135deg, #0e1320 0%, #1a2130 60%, #0a0e18 100%);
-            border: 2px solid #b8914b;
-            border-radius: 36px;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
-                        0 0 30px rgba(184, 145, 75, 0.4),
-                        inset 0 0 40px rgba(255, 215, 120, 0.06);
-            transition: box-shadow 0.3s ease, border-color 3s ease;
-        }
-
-        .license-card:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
-                        0 0 45px rgba(230, 180, 60, 0.7),
-                        inset 0 0 40px rgba(255, 215, 120, 0.1);
-        }
-
-        /* --- NEW: animated license background (gif) --- */
-        .license-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image: url('https://giffiles.alphacoders.com/215/215988.gif');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.22;
-            mix-blend-mode: overlay;
-            pointer-events: none;
-            z-index: 0;
-            border-radius: 34px; /* match card radius minus border */
-            transition: opacity 0.5s ease;
-        }
-
-        .license-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                repeating-linear-gradient(45deg, rgba(184,145,75,0.05) 0px, rgba(184,145,75,0.05) 2px, transparent 2px, transparent 6px),
-                repeating-linear-gradient(-45deg, rgba(184,145,75,0.05) 0px, rgba(184,145,75,0.05) 2px, transparent 2px, transparent 6px);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Make sure all direct children of license-card sit above the background gif */
-        .license-card > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        .license-seal {
-            position: absolute;
-            top: 1.4rem;
-            right: 1.4rem;
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg,
-                #f5d742, #ff9e3d, #c9a13b, #e6e6e6,
-                #f5d742, #ffe066, #b8914b, #f5d742);
-            opacity: 0.75;
-            z-index: 10; /* above gif */
-            box-shadow: 0 0 20px rgba(245, 215, 120, 0.6),
-                        inset 0 0 15px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: sealShimmer 6s ease-in-out infinite alternate;
-        }
-
-        .license-seal::after {
-            content: "前兆";
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            color: rgba(20, 20, 30, 0.85);
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-        }
-
-        @keyframes sealShimmer {
-            0%   { filter: hue-rotate(0deg) brightness(1); }
-            50%  { filter: hue-rotate(20deg) brightness(1.1); }
-            100% { filter: hue-rotate(-15deg) brightness(1.05); }
-        }
-
-        .license-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #b8914b;
-            padding-bottom: 0.75rem;
-            z-index: 1;
-            position: relative;
-            padding-right: 110px;
-        }
-
-        .license-header .state {
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            color: #f5d742;
-            font-size: 1.15rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(245, 215, 120, 0.5);
-        }
-
-        .license-header .state small {
-            display: block;
-            font-size: 0.55em;
-            color: #bbaa7a;
-            letter-spacing: 3px;
-            font-weight: 300;
-            margin-top: 2px;
-            text-shadow: none;
-        }
-
-        .license-header .class {
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            color: #ccb185;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-align: right;
-            text-transform: uppercase;
-        }
-
-        .license-header .class strong {
-            display: block;
-            color: #f5e7c8;
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-
-        .license-body {
-            display: flex;
-            gap: 1.5rem;
-            align-items: flex-start;
-            z-index: 1;
-            position: relative;
-            flex-wrap: wrap;
-        }
-
-        .license-photo {
-            width: 140px;
-            aspect-ratio: 1/1.2;
-            border-radius: 10px;
-            border: 2px solid #b8914b;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7),
-                        inset 0 0 15px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-            background: #0e0c14;
-        }
-
-        .license-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            filter: contrast(1.05) saturate(0.9);
-        }
-
-        .license-info {
-            flex: 1;
-            min-width: 200px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .license-row {
-            display: flex;
-            align-items: baseline;
-            gap: 0.7rem;
-            border-bottom: 1px dotted rgba(184, 145, 75, 0.3);
-            padding-bottom: 0.3rem;
-        }
-
-        .license-row .label {
-            color: #bbaa7a;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            width: 90px;
-            flex-shrink: 0;
-            font-weight: 600;
-        }
-
-        .license-row .value {
-            color: #f5e7c8;
-            font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-            font-weight: 700;
-            text-shadow: 0 0 6px rgba(245, 215, 120, 0.25);
-        }
-
-        .license-row .value.name {
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-            color: #ffe9b6;
-            text-shadow: 0 0 8px rgba(245, 215, 120, 0.5),
-                         2px 2px 0 #5e3f1a;
-        }
-
-        .license-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 1rem;
-            margin-top: 0.4rem;
-            z-index: 1;
-            position: relative;
-            flex-wrap: wrap;
-        }
-
-        .license-signature {
-            flex: 1;
-            min-width: 160px;
-        }
-
-        .license-signature .label {
-            color: #bbaa7a;
-            font-size: 0.6rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .license-signature .sig {
-            font-family: 'Brush Script MT', 'Segoe Script', cursive;
-            font-style: italic;
-            color: #f5d742;
-            font-size: 1.7rem;
-            line-height: 1.1;
-            border-bottom: 1px solid rgba(184, 145, 75, 0.4);
-            padding-bottom: 0.2rem;
-            text-shadow: 0 0 8px rgba(245, 215, 120, 0.4);
-        }
-
-        .license-barcode {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 3px;
-        }
-
-        .license-barcode .bars {
-            display: flex;
-            gap: 2px;
-            align-items: flex-end;
-            height: 40px;
-        }
-
-        .license-barcode .bars span {
-            width: 2px;
-            background: #dcd0b0;
-            border-radius: 1px;
-        }
-
-        .license-barcode .num {
-            font-family: 'Courier New', monospace;
-            color: #bbaa7a;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-        }
-
-        /* ============================================
-           IMPACT FRAME FLASH
-           ============================================ */
-        body.impact-invert    { filter: invert(1); }
-        body.impact-grayscale { filter: grayscale(1); }
-        body.impact-invert-2  { filter: invert(1); }
-        body.impact-grayscale-2 { filter: grayscale(1); }
-
         @media (max-width: 700px) {
             .card { padding: 1.5rem; border-radius: 28px; }
             .name h1 { font-size: 2.4rem; }
             .stat-label { width: 100px; font-size: 0.8rem; }
             .star { font-size: 1.5rem; }
             .stat-value { font-size: 0.8rem; padding: 0.1rem 0.6rem; }
-            .license-card { padding: 1.4rem; border-radius: 28px; }
-            .license-photo { width: 110px; }
-            .license-seal { width: 65px; height: 65px; }
-            .license-seal::after { font-size: 1.15rem; }
-            .license-header { padding-right: 80px; }
         }
 
         @media (max-width: 480px) {
@@ -1243,32 +733,11 @@
             .stars { order: 2; width: 100%; margin-top: 5px; }
             .stat-value { order: 3; margin-left: auto; }
             .stat-label { width: auto; }
-            .license-header .state { font-size: 0.95rem; letter-spacing: 3px; }
-            .license-row .label { width: 70px; font-size: 0.55rem; }
-            .license-row .value { font-size: 0.8rem; }
-            .license-row .value.name { font-size: 1.05rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Lightning overlay: bolts get injected here at runtime -->
-    <div class="lightning-layer" id="lightningLayer"></div>
-
-    <!-- ============================================
-         BEGIN SPLASH
-         ============================================ -->
-    <div class="begin-splash" id="beginSplash">
-        <div class="begin-title">
-            OMONI, TAERU
-            <small>· a memory ·</small>
-        </div>
-        <button class="begin-btn" id="beginBtn">BEGIN</button>
-    </div>
-
-    <!-- ============================================
-         INTRO OVERLAY
-         ============================================ -->
     <div class="intro" id="intro">
 
         <div class="wing-layer">
@@ -1365,208 +834,101 @@
                 <div class="card-caption">Harsh Reality</div>
             </div>
 
-            <!-- FINAL CARD: Reflections underneath, Mari-ya on top (burned away) -->
             <div class="scrap-card" data-index="8" id="finalCard">
                 <div class="card-img-slot" id="finalSlot">
-                    <img class="reflections-under"
-                         src="https://file.garden/aqgdSRXJrLKWXbRd/Profiles/Reflections.png"
-                         alt="Reflections">
-                    <img class="top-layer"
-                         src="https://i.ibb.co/pv7bXhtC/Mari-ya.png"
-                         alt="Mari-ya"
-                         id="finalImg">
+                    <img src="https://i.ibb.co/pv7bXhtC/Mari-ya.png" alt="Mari-ya" id="finalImg">
                     <canvas class="burn-canvas" id="burnCanvas"></canvas>
                 </div>
-                <div class="card-caption" id="hopeCaption">
-                    <span id="hopeText">Hope</span>
-                </div>
+                <div class="card-caption">Hope</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================
-         MAIN CARD — FRONT + BACK (flip)
-         ============================================ -->
-    <div class="card-flip-wrapper" id="cardFlipWrapper">
-        <div class="card-flip-inner" id="cardFlipInner">
+    <div class="card" id="mainCard">
+        <div class="character-visual">
+            <div class="portrait-frame" id="portraitFrame">
+                <img class="portrait-img"
+                     src="https://i.pinimg.com/736x/93/be/1a/93be1aca2fe81683334f6378e69c5252.jpg"
+                     alt="Omoni, Taeru">
 
-            <!-- FRONT: the anime profile -->
-            <div class="card-face front">
-                <div class="card" id="mainCard">
-                    <button class="flip-btn" id="flipBtnFront" type="button">
-                        <span class="flip-icon">↻</span> License
-                    </button>
+                <img class="portrait-alt"
+                     id="altImg"
+                     src="https://i.pinimg.com/736x/fb/4f/26/fb4f26647ebf2400b57073e7223e5be9.jpg"
+                     alt="Taeru alt">
 
-                    <div class="character-visual">
-                        <div class="portrait-frame" id="portraitFrame">
-                            <img class="portrait-img"
-                                 src="https://i.pinimg.com/736x/93/be/1a/93be1aca2fe81683334f6378e69c5252.jpg"
-                                 alt="Omoni, Taeru">
+                <div class="portrait-hint">Click</div>
+                <div class="yt-hidden-player" id="ytPlayer"></div>
+            </div>
+            <div class="model-tag">⛩️ 5★ ANIME MODEL ⛩️</div>
+        </div>
 
-                            <img class="portrait-alt"
-                                 id="altImg"
-                                 src="https://i.pinimg.com/736x/fb/4f/26/fb4f26647ebf2400b57073e7223e5be9.jpg"
-                                 alt="Taeru alt">
-                        </div>
-                        <div class="model-tag">⛩️ 5★ ANIME MODEL ⛩️</div>
-                    </div>
-
-                    <div class="character-info">
-                        <div class="name-title">
-                            <div class="name">
-                                <h1>TAERU <small>OMONI</small></h1>
-                            </div>
-                            <div class="badge">LEGENDARY</div>
-                        </div>
-
-                        <div class="stats-heading">
-                            ⚔️ BATTLE STATS <span></span>
-                        </div>
-
-                        <div class="stat-row">
-                            <div class="stat-label">Strength</div>
-                            <div class="stars">
-                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            </div>
-                            <div class="stat-value">5.0</div>
-                        </div>
-
-                        <div class="stat-row">
-                            <div class="stat-label">Resilience</div>
-                            <div class="stars">
-                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            </div>
-                            <div class="stat-value">5.0</div>
-                        </div>
-
-                        <div class="stat-row">
-                            <div class="stat-label">Durability</div>
-                            <div class="stars">
-                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            </div>
-                            <div class="stat-value">5.0</div>
-                        </div>
-
-                        <div class="stat-row">
-                            <div class="stat-label">Stamina</div>
-                            <div class="stars">
-                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            </div>
-                            <div class="stat-value">5.0</div>
-                        </div>
-
-                        <div class="stat-row">
-                            <div class="stat-label">Resolve</div>
-                            <div class="stars">
-                                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            </div>
-                            <div class="stat-value">5.0</div>
-                        </div>
-
-                        <div class="song-reference">
-                            <div class="music-icon">🎧</div>
-                            <div class="song-text">
-                                <div class="title">I DON'T BEND</div>
-                                <div class="status" id="songStatus">♪ I Don't Bend · playing…</div>
-                            </div>
-                            <div class="equalizer" id="equalizer">
-                                <span></span><span></span><span></span><span></span><span></span>
-                            </div>
-                        </div>
-                    </div>
+        <div class="character-info">
+            <div class="name-title">
+                <div class="name">
+                    <h1>TAERU <small>OMONI</small></h1>
                 </div>
+                <div class="badge">LEGENDARY</div>
             </div>
 
-            <!-- BACK: mock driver's license -->
-            <div class="card-face back" id="cardBack">
-                <div class="license-card">
-                    <button class="flip-btn" id="flipBtnBack" type="button">
-                        <span class="flip-icon">↻</span> Profile
-                    </button>
-
-                    <div class="license-seal"></div>
-
-                    <div class="license-header">
-                        <div class="state">
-                            Zenchou Municipal
-                            <small>· 運転免許センター ·</small>
-                        </div>
-                        <div class="class">
-                            Class
-                            <strong>★ S</strong>
-                        </div>
-                    </div>
-
-                    <div class="license-body">
-                        <div class="license-photo">
-                            <img src="https://i.pinimg.com/736x/93/be/1a/93be1aca2fe81683334f6378e69c5252.jpg" alt="License photo">
-                        </div>
-
-                        <div class="license-info">
-                            <div class="license-row">
-                                <div class="label">Name</div>
-                                <div class="value name">OMONI, TAERU</div>
-                            </div>
-                            <div class="license-row">
-                                <div class="label">DOB</div>
-                                <div class="value">09 / 19 / ▓▓▓▓</div>
-                            </div>
-                            <div class="license-row">
-                                <div class="label">Lic. No.</div>
-                                <div class="value">B0-UND73-55</div>
-                            </div>
-                            <div class="license-row">
-                                <div class="label">Issued</div>
-                                <div class="value">14 / 09 / 2016</div>
-                            </div>
-                            <div class="license-row">
-                                <div class="label">Expires</div>
-                                <div class="value">14 / 09 / 2026</div>
-                            </div>
-                            <div class="license-row">
-                                <div class="label">Endorse</div>
-                                <div class="value">KNOWN OMEN · 5★</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="license-footer">
-                        <div class="license-signature">
-                            <div class="label">Signature</div>
-                            <div class="sig">Taeru Omoni</div>
-                        </div>
-                        <div class="license-barcode">
-                            <div class="bars">
-                                <span style="height:30px"></span>
-                                <span style="height:40px"></span>
-                                <span style="height:22px"></span>
-                                <span style="height:38px"></span>
-                                <span style="height:18px"></span>
-                                <span style="height:34px"></span>
-                                <span style="height:28px"></span>
-                                <span style="height:40px"></span>
-                                <span style="height:20px"></span>
-                                <span style="height:36px"></span>
-                                <span style="height:26px"></span>
-                                <span style="height:34px"></span>
-                                <span style="height:30px"></span>
-                                <span style="height:40px"></span>
-                                <span style="height:22px"></span>
-                                <span style="height:32px"></span>
-                            </div>
-                            <div class="num">TR-0M0N1-7742</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="stats-heading">
+                ⚔️ BATTLE STATS <span></span>
             </div>
 
+            <div class="stat-row">
+                <div class="stat-label">Strength</div>
+                <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="stat-value">5.0</div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label">Resilience</div>
+                <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="stat-value">5.0</div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label">Durability</div>
+                <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="stat-value">5.0</div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label">Stamina</div>
+                <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="stat-value">5.0</div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label">Resolve</div>
+                <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </div>
+                <div class="stat-value">5.0</div>
+            </div>
+
+            <div class="song-reference">
+                <div class="music-icon">🎧</div>
+                <div class="song-text">
+                    <div class="title">I DON'T BEND</div>
+                    <div class="status" id="songStatus">♪ I Don't Bend · playing…</div>
+                </div>
+                <div class="equalizer" id="equalizer">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         (function() {
-            const beginSplash = document.getElementById('beginSplash');
-            const beginBtn    = document.getElementById('beginBtn');
             const intro       = document.getElementById('intro');
             const scrapCards  = Array.from(document.querySelectorAll('.scrap-card[data-index]'));
             const finalCard   = document.getElementById('finalCard');
@@ -1574,239 +936,123 @@
             const finalImg    = document.getElementById('finalImg');
             const burnCanvas  = document.getElementById('burnCanvas');
             const mainCard    = document.getElementById('mainCard');
+            const ytPlayer    = document.getElementById('ytPlayer');
             const equalizer   = document.getElementById('equalizer');
             const songStatus  = document.getElementById('songStatus');
             const portraitFrame = document.getElementById('portraitFrame');
             const altImg      = document.getElementById('altImg');
-            const lightningLayer = document.getElementById('lightningLayer');
-            const hopeText    = document.getElementById('hopeText');
+            const VIDEO_ID    = 'QTjJd080aaA';
+            const SEEK_SECONDS = 134; // 2:14
 
-            // Flip wrapper elements
-            const cardFlipWrapper = document.getElementById('cardFlipWrapper');
-            const cardFlipInner   = document.getElementById('cardFlipInner');
-            const flipBtnFront    = document.getElementById('flipBtnFront');
-            const flipBtnBack     = document.getElementById('flipBtnBack');
+            const FADE_DURATION = 25000; // 25s image fade
+            const BORDER_DELAY  = 1000;  // +1s before border + scheme shift
 
-            // ============================================
-            // AUDIO
-            // ============================================
-            const AUDIO_SRC    = 'theme.mp3';
-            const SEEK_SECONDS = 134;
-
-            const song = new Audio(AUDIO_SRC);
-            song.preload = 'auto';
-            song.volume  = 0.85;
-            song.loop    = true;
-
-            function startSong() {
-                const p = song.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        songStatus.textContent = '♪ I Don\'t Bend · playing…';
-                        songStatus.style.color = '#f5d742';
-                    }).catch(err => {
-                        console.warn('Audio play() rejected:', err);
-                    });
-                }
-            }
-
-            function seekSong(seconds) {
-                try {
-                    song.currentTime = seconds;
-                    startSong();
-                } catch (e) {
-                    song.addEventListener('loadedmetadata', function once() {
-                        song.removeEventListener('loadedmetadata', once);
-                        try { song.currentTime = seconds; } catch (e) {}
-                        startSong();
-                    });
-                }
-            }
-
-            // ============================================
-            // BEGIN SPLASH
-            // ============================================
-            let started = false;
-
-            function beginProfile() {
-                if (started) return;
-                started = true;
-
-                startSong();
-
-                beginSplash.classList.add('fade-out');
-                setTimeout(() => { beginSplash.style.display = 'none'; }, 1100);
-
-                startFlipSequence();
-            }
-
-            beginBtn.addEventListener('click', beginProfile);
-
-            // ============================================
-            // CARD FLIP (front <-> back)
-            // ============================================
-            function flipCard() {
-                cardFlipInner.classList.toggle('flipped');
-            }
-
-            flipBtnFront.addEventListener('click', function(e) {
-                e.stopPropagation();
-                flipCard();
-            });
-
-            flipBtnBack.addEventListener('click', function(e) {
-                e.stopPropagation();
-                flipCard();
-            });
-
-            // ============================================
-            // LIGHTNING STRIKES
-            // ============================================
-            function makeBoltSVG() {
-                const segments = 9;
-                let x = 100;
-                let path = `M ${x} 0`;
-                for (let i = 1; i <= segments; i++) {
-                    const y = (400 / segments) * i;
-                    const dx = (Math.random() - 0.5) * (i === segments ? 20 : 55);
-                    x += dx;
-                    path += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
-                }
-
-                let branches = '';
-                const branchCount = 2;
-                for (let b = 0; b < branchCount; b++) {
-                    const startSeg = 2 + Math.floor(Math.random() * 4);
-                    const startY = (400 / segments) * startSeg;
-                    const startX = 100 + (Math.random() - 0.5) * 60;
-                    const endY = startY + 40 + Math.random() * 60;
-                    const endX = startX + (Math.random() - 0.5) * 90;
-                    branches += ` M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)}`;
-                }
-
-                return `
-                    <svg viewBox="0 0 200 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                        <path class="glow" d="${path}${branches}" />
-                        <path d="${path}${branches}" />
-                    </svg>
-                `;
-            }
-
-            function strikeBolt(options) {
-                const opts = options || {};
-                const bolt = document.createElement('div');
-                bolt.className = 'bolt' + (opts.tail ? ' tail' : '');
-
-                const w = opts.w || (140 + Math.random() * 220);
-                const h = opts.h || (340 + Math.random() * 320);
-                const left = opts.left != null
-                    ? opts.left
-                    : (Math.random() * 90 - 5);
-                const top  = opts.top != null
-                    ? opts.top
-                    : (Math.random() * 20 - 10);
-                const rot  = opts.rot != null
-                    ? opts.rot
-                    : (Math.random() * 50 - 25);
-
-                bolt.style.width = w + 'px';
-                bolt.style.height = h + 'px';
-                bolt.style.left = left + 'vw';
-                bolt.style.top = top + 'vh';
-                bolt.style.transform = `rotate(${rot}deg)`;
-                bolt.style.transformOrigin = 'top center';
-
-                bolt.innerHTML = makeBoltSVG();
-
-                lightningLayer.appendChild(bolt);
-
-                setTimeout(() => {
-                    if (bolt.parentNode) bolt.parentNode.removeChild(bolt);
-                }, 500);
-            }
-
-            // ============================================
-            // IMPACT FRAME FLASH + LIGHTNING SEQUENCE
-            // ============================================
-            function impactFlash() {
-                const step = 90;
-
-                strikeBolt({ w: 220, h: 520, left: 12, top: -8, rot: -18 });
-
-                document.body.classList.add('impact-invert');
-                setTimeout(() => {
-                    document.body.classList.remove('impact-invert');
-                    document.body.classList.add('impact-grayscale');
-
-                    strikeBolt({ w: 180, h: 460, left: 62, top: -6, rot: 22 });
-
-                    setTimeout(() => {
-                        document.body.classList.remove('impact-grayscale');
-                        document.body.classList.add('impact-invert-2');
-
-                        strikeBolt({ w: 260, h: 600, left: 38, top: -10, rot: -6 });
-
-                        setTimeout(() => {
-                            document.body.classList.remove('impact-invert-2');
-                            document.body.classList.add('impact-grayscale-2');
-
-                            strikeBolt({ w: 160, h: 420, left: 78, top: -4, rot: 34 });
-
-                            setTimeout(() => {
-                                document.body.classList.remove('impact-grayscale-2');
-
-                                strikeBolt({
-                                    w: 200, h: 500,
-                                    left: 22, top: -6, rot: -12,
-                                    tail: true
-                                });
-
-                                setTimeout(() => {
-                                    strikeBolt({
-                                        w: 240, h: 560,
-                                        left: 68, top: -8, rot: 18,
-                                        tail: true
-                                    });
-                                }, 220);
-
-                            }, step);
-                        }, step);
-                    }, step);
-                }, step);
-            }
-
-            // ============================================
-            // PORTRAIT CLICK — silent, no indicator
-            // ============================================
-            const FADE_DURATION = 24000;
-            const BORDER_DELAY  = 1000;
+            let playerLoaded = false;
+            let playerIframe = null;
+            let songAudible  = false;
             let portraitClicked = false;
 
-            portraitFrame.addEventListener('click', function(e) {
-                if (e.target.closest('.flip-btn')) return;
+            function loadAndPlay(muted) {
+                if (playerLoaded) return;
+                playerLoaded = true;
+
+                const muteParam = muted ? '&mute=1' : '';
+                playerIframe = document.createElement('iframe');
+                playerIframe.setAttribute('src',
+                    `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1${muteParam}`
+                );
+                playerIframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+                playerIframe.setAttribute('allowfullscreen', 'false');
+                playerIframe.setAttribute('frameborder', '0');
+                playerIframe.id = 'ytFrame';
+                playerIframe.style.width = '1px';
+                playerIframe.style.height = '1px';
+
+                ytPlayer.appendChild(playerIframe);
+                equalizer.classList.add('playing');
+
+                if (!muted) {
+                    songStatus.textContent = '♪ I Don\'t Bend · playing…';
+                    songStatus.style.color = '#f5d742';
+                }
+            }
+
+            function unmuteSong() {
+                if (songAudible || !playerLoaded) return;
+                songAudible = true;
+
+                if (playerIframe && playerIframe.parentNode) {
+                    playerIframe.parentNode.removeChild(playerIframe);
+                }
+                playerLoaded = false;
+                loadAndPlay(false);
+            }
+
+            function seekTo(seconds) {
+                if (!playerIframe) return;
+                try {
+                    playerIframe.contentWindow.postMessage(
+                        JSON.stringify({
+                            event: 'command',
+                            func: 'seekTo',
+                            args: [seconds, true]
+                        }),
+                        '*'
+                    );
+                    playerIframe.contentWindow.postMessage(
+                        JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
+                        '*'
+                    );
+                } catch (e) {
+                    const muteParam = songAudible ? '' : '&mute=1';
+                    const newIframe = document.createElement('iframe');
+                    newIframe.setAttribute('src',
+                        `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1&start=${seconds}${muteParam}`
+                    );
+                    newIframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+                    newIframe.setAttribute('allowfullscreen', 'false');
+                    newIframe.setAttribute('frameborder', '0');
+                    newIframe.id = 'ytFrame';
+                    newIframe.style.width = '1px';
+                    newIframe.style.height = '1px';
+                    if (playerIframe && playerIframe.parentNode) {
+                        playerIframe.parentNode.removeChild(playerIframe);
+                    }
+                    ytPlayer.appendChild(newIframe);
+                    playerIframe = newIframe;
+                }
+            }
+
+            window.addEventListener('load', function() {
+                loadAndPlay(true);
+            });
+
+            ['click', 'touchstart', 'keydown', 'mousemove', 'scroll', 'wheel',
+             'pointerdown', 'pointermove', 'focus', 'visibilitychange']
+                .forEach(evt => {
+                    document.addEventListener(evt, function once() {
+                        document.removeEventListener(evt, once);
+                        unmuteSong();
+                    }, { once: true });
+                });
+
+            setTimeout(unmuteSong, 250);
+
+            portraitFrame.addEventListener('click', function() {
                 if (portraitClicked) return;
                 portraitClicked = true;
 
-                startSong();
-                seekSong(SEEK_SECONDS);
+                unmuteSong();
+                setTimeout(() => seekTo(SEEK_SECONDS), 100);
 
                 altImg.classList.add('show');
 
-                setTimeout(function() {
-                    impactFlash();
-                    mainCard.classList.add('tremor');
+                setTimeout(() => {
                     portraitFrame.classList.add('white-border');
                     mainCard.classList.add('white-scheme');
-
-                    setTimeout(() => {
-                        mainCard.classList.remove('tremor');
-                    }, 600);
                 }, FADE_DURATION + BORDER_DELAY);
             });
 
-            // ============================================
-            // BURN EFFECT
-            // ============================================
             function burnCard(callback) {
                 const card = finalCard;
                 const slot = finalSlot;
@@ -1929,27 +1175,15 @@
                     } else {
                         card.classList.remove('burning');
                         card.classList.add('burn-ash');
-
-                        finalImg.style.transition = 'opacity 0.9s ease';
-                        finalImg.style.opacity = '0';
-
                         setTimeout(() => {
-                            burnCanvas.style.transition = 'opacity 1.2s ease';
-                            burnCanvas.style.opacity = '0';
-                        }, 200);
-
-                        setTimeout(function() {
                             if (callback) callback();
-                        }, 2200);
+                        }, 600);
                     }
                 }
 
                 requestAnimationFrame(frame);
             }
 
-            // ============================================
-            // SCRAPBOOK FLIP SEQUENCE
-            // ============================================
             function startFlipSequence() {
                 const FIRST_DELAY   = 800;
                 const FLIP_INTERVAL = 1350;
@@ -1966,13 +1200,13 @@
                     card.classList.add('visible');
 
                     if (isLast) {
-                        setTimeout(function() {
-                            burnCard(function() {
+                        setTimeout(() => {
+                            burnCard(() => {
                                 enterProfile();
                             });
                         }, FLIP_INTERVAL + FINAL_HOLD);
                     } else {
-                        setTimeout(function() {
+                        setTimeout(() => {
                             card.classList.remove('visible');
                             card.classList.add('flipped');
                             i++;
@@ -1984,100 +1218,24 @@
                 setTimeout(showNext, FIRST_DELAY);
             }
 
-            // ============================================
-            // ENTER PROFILE
-            // ============================================
             function enterProfile() {
-                startSong();
+                unmuteSong();
 
+                // Fade in the GIF background right as the intro gives way
                 mainCard.classList.add('bg-gif-loaded');
-                equalizer.classList.add('playing');
 
                 intro.classList.add('fade-out');
 
-                setTimeout(function() {
-                    cardFlipWrapper.classList.add('revealed');
+                setTimeout(() => {
+                    mainCard.classList.add('revealed');
                 }, 200);
 
-                setTimeout(function() {
+                setTimeout(() => {
                     intro.style.display = 'none';
                 }, 900);
             }
 
-            // ============================================
-            // HOPE -> HOPELESS REVEAL
-            // ============================================
-            // The final card already has id "finalCard" and its caption is inside #hopeCaption.
-            // We'll observe the final image (top layer) opacity change to reveal "less".
-            // When finalImg opacity drops below 0.5 (burn effect), we change text to "Hopeless".
-            // But we want to keep the word "Hope" and append "less" with a fade-in.
-            // Simpler: replace innerHTML of #hopeText when finalImg opacity < 0.5.
-
-            function updateHopeText() {
-                // We want "Hopeless" – but keep it looking like the original caption style.
-                // The original was just "Hope". We'll change it to "Hopeless" with a smooth transition.
-                if (hopeText.textContent.trim() === 'Hope') {
-                    // Create a span for "less" that fades in
-                    hopeText.innerHTML = 'Hope<span id="lessPart" style="opacity:0; transition: opacity 0.8s ease;">less</span>';
-                    // Force reflow
-                    void hopeText.offsetWidth;
-                    const lessPart = document.getElementById('lessPart');
-                    if (lessPart) lessPart.style.opacity = '1';
-                }
-            }
-
-            // We'll poll the finalImg opacity since we can't easily hook into style changes.
-            // Or better: we know that after burn effect, finalImg opacity becomes 0.
-            // We'll set an interval to check.
-            let hopeCheckInterval = null;
-
-            function startHopeCheck() {
-                if (hopeCheckInterval) clearInterval(hopeCheckInterval);
-                hopeCheckInterval = setInterval(function() {
-                    const opacity = parseFloat(window.getComputedStyle(finalImg).opacity);
-                    if (opacity < 0.5 && hopeText.textContent.trim() === 'Hope') {
-                        updateHopeText();
-                        clearInterval(hopeCheckInterval);
-                        hopeCheckInterval = null;
-                    }
-                }, 200);
-            }
-
-            // Start checking when the final card becomes visible (i.e., when burn starts)
-            // We'll hook into the burnCard function to start the check.
-            // Since burnCard is called inside showNext for the last card, we can start the check there.
-
-            // Let's override the burnCard call or wrap it.
-            // We'll modify the startFlipSequence to also trigger the hope check.
-
-            // But burnCard is defined above, so we can call startHopeCheck() right after burnCard starts.
-            // We'll monkey-patch burnCard to call startHopeCheck after a delay.
-
-            const originalBurnCard = burnCard;
-            burnCard = function(callback) {
-                // start checking hope text after a short delay
-                setTimeout(startHopeCheck, 500);
-                originalBurnCard(callback);
-            };
-
-            // Also, just in case the image opacity changes via other means,
-            // we can also listen for a custom event, but polling is fine.
-
-            // Clean up interval on page unload (optional)
-            window.addEventListener('beforeunload', function() {
-                if (hopeCheckInterval) clearInterval(hopeCheckInterval);
-            });
-
-            // Also, we need to ensure that after the "less" is revealed, the text stays "Hopeless".
-            // The updateHopeText function handles that.
-
-            // One more thing: the initial state is "Hope". We want to hide "less" initially.
-            // So the original text is fine.
-
-            // But note: the caption element has id "hopeCaption" and inside it a span with id "hopeText".
-            // We'll make sure the initial text is "Hope".
-
-            // That's it.
+            window.addEventListener('load', startFlipSequence);
         })();
     </script>
 </body>
